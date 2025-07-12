@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نتیجه پرداخت</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      max-width: 90%;
+    }
+    .status-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .error {
+      color: #c0392b;
+    }
+    .authority {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #666;
+      direction: ltr;
+    }
+    .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="payment-result">
+    <!-- محتوا به صورت داینامیک بارگذاری می‌شود -->
+  </div>
+
+  <script>
+    // دریافت پارامترهای URL
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("Status");
+    const authority = params.get("Authority") || "";
+
+    // موفقیت یا شکست پرداخت
+    const success = (status === "OK");
+
+    // محتوای HTML بر اساس نتیجه پرداخت
+    const container = document.getElementById("payment-result");
+
+    container.innerHTML = `
+      <div class="status-icon ${success ? 'success' : 'error'}">
+        ${success ? '✅' : '❌'}
+      </div>
+      <h2>${success ? 'پرداخت با موفقیت انجام شد' : 'پرداخت ناموفق بود'}</h2>
+      <p>${success ? 'از خرید شما سپاسگزاریم.' : 'متأسفیم، مشکلی در فرآیند پرداخت به‌وجود آمده است.'}</p>
+      <div class="authority">کد پیگیری: ${authority}</div>
+      <a href="https://t.me/Digital_assess_test_bot" class="btn">بازگشت به ربات</a>
+    `;
+
+    // اگر خواستی لاگ سمت سرور ثبت کنی، می‌تونی از fetch برای ارسال به سرور استفاده کنی:
+    fetch("log_payment.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ authority, status })
+    }).catch(err => console.warn("خطا در ثبت لاگ:", err));
+  </script>
+</body>
+</html>
